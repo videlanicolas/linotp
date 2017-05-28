@@ -30,7 +30,7 @@ Upload <b>encKey</b>, <b>encKey.sha1</b> and <b>linotp_certificate.p12</b> to yo
 
 #### If you don't use S3 bucket for secret sharing then the container will use random encKey and certificate files.
 
-### Enviroment variables
+### Environment variables
 #### Required
 
  * LINOTP_TO_MAIL: Who should LinOTP send mails in case of errors.
