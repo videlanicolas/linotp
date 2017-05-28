@@ -41,28 +41,28 @@ Upload <b>encKey</b>, <b>encKey.sha1</b> and <b>linotp_certificate.p12</b> to yo
  * LINOTP_HOSTNAME: LinOTP token database's hostname/IP.
  * LINOTP_DB: LinOTP token database's name.
  * RADIUS_SECRET: Freeradius secret.
- * RADIUS_REALM: Freeradius Realm
- * RADIUS_SSL_CHECK: Should Freeradius check the LinOTP SSL certificate? Better not... (True/False)
+ * RADIUS_REALM: Freeradius Realm.
+ * RADIUS_SSL_CHECK: Should Freeradius check the LinOTP SSL certificate? Better not... (True/False).
 
 #### Optional
 
- * LINOTP_AUDIT_DB: Database name for the Audit database, default: LINOTP_DB
- * LINOTP_AUDIT_USER: User for the Audit database, default: LINOTP_USER
- * LINOTP_AUDIT_PASSWORD: Password for the Audit username, default: LINOTP_PASSWORD
- * LINOTP_AUDIT_HOSTNAME: Hostname/IP for the Audit database, default: LINOTP_HOSTNAME
- * LINTOP_DEFAULTSYNCWINDOW: How many blank presses LinOTP will calculated further from its last known counter, default: 1000
- * LINOTP_DEFAULTOTPLEN:  Length of the OTP value, default: 6
- * LINOTP_DEFAULTCOUNTWINDOW: How many additional OTP values LinOTP will compute to verify the OTP value entered by the user. Default: 50
- * LINOTP_DEFAULTMAXFAILCOUNT: Max fail counter, default: 15
- * LINOTP_FAILCOUNTINCONFALSEPIN: Should LinOTP increase on wrong pin? You should, so don't change this. Default: True
- * LINOTP_PREPENDPIN: If set to true (checked) the user needs to put the OTP PIN in front of the OTP value. Default: True
- * LINOTP_DEFAULTRESETFAILCOUNT: Should fail count reset when the user makes a successful login? Default: True
- * LINOTP_SPLITATSIGN: Should LinOTP split Realm and Username? Default: True
+ * LINOTP_AUDIT_DB: Database name for the Audit database, default: LINOTP_DB.
+ * LINOTP_AUDIT_USER: User for the Audit database, default: LINOTP_USER.
+ * LINOTP_AUDIT_PASSWORD: Password for the Audit username, default: LINOTP_PASSWORD.
+ * LINOTP_AUDIT_HOSTNAME: Hostname/IP for the Audit database, default: LINOTP_HOSTNAME.
+ * LINTOP_DEFAULTSYNCWINDOW: How many blank presses LinOTP will calculated further from its last known counter, default: 1000.
+ * LINOTP_DEFAULTOTPLEN:  Length of the OTP value, default: 6.
+ * LINOTP_DEFAULTCOUNTWINDOW: How many additional OTP values LinOTP will compute to verify the OTP value entered by the user. Default: 50.
+ * LINOTP_DEFAULTMAXFAILCOUNT: Max fail counter, default: 15.
+ * LINOTP_FAILCOUNTINCONFALSEPIN: Should LinOTP increase on wrong pin? You should, so don't change this. Default: True.
+ * LINOTP_PREPENDPIN: If set to true (checked) the user needs to put the OTP PIN in front of the OTP value. Default: True.
+ * LINOTP_DEFAULTRESETFAILCOUNT: Should fail count reset when the user makes a successful login? Default: True.
+ * LINOTP_SPLITATSIGN: Should LinOTP split Realm and Username? Default: True.
  * AWS_BUCKET: AWS bucket name. Default: Use the automatic generated encKey and certificate.
  * AWS_SECRET_KEY: AWS secret key. Default: Use the automatic generated encKey and certificate.
  * AWS_ACCESS_KEY: AWS access key. Default: Use the automatic generated encKey and certificate.
- * ENCKEY_PASSWORD: Password for the encrypted encKey file. Default: None
- * PKCS12_PASSWORD: Password for the PKCS12 encrypted certificate. Default: None
+ * ENCKEY_PASSWORD: Password for the encrypted encKey file. Default: None.
+ * PKCS12_PASSWORD: Password for the PKCS12 encrypted certificate. Default: None.
 
 ### Run
 An example run:
