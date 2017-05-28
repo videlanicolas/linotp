@@ -9,7 +9,7 @@ This is my attempt of merging LinOTP with Kubernetes, I needed LinOTP for a larg
  - [ ] Share secrets with other method than S3 buckets.
  - [ ] Give more configuration parameters through environment variables.
 
-### Download docker image:
+### Download docker image
 
 [Dockerhub](https://hub.docker.com/r/videlanicolas/linotp/)
 
