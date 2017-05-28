@@ -26,7 +26,7 @@ openssl aes-256-cbc -a -salt -in encKey.bak -out encKey
 openssl pkcs12 -export -out linotp_certificate.p12 -inkey privateKey.key -in certificate.crt
 ```
 
-Upload <b>encKey</b>, <b>encKey.sha1</b> and <b>linotp_certificate.p12</b> to your S3 bucket. Take down the passwords you've used so that you can share them with your Docker container through environment variables.
+Upload <b>encKey</b>, <b>encKey.sha1</b> and <b>linotp_certificate.p12</b> to your S3 bucket. Take note of the passwords you've used so that you can share them with your Docker container through environment variables.
 
 #### If you don't use S3 bucket for secret sharing then the container will use random encKey and certificate files.
 
