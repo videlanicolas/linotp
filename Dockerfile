@@ -19,11 +19,13 @@ RUN echo "DEFAULT Auth-type := perl" > /etc/freeradius/users &&\
 COPY rlm_perl.ini /etc/linotp2/rlm_perl.ini
 COPY clients.conf /etc/freeradius/clients.conf
 COPY linotp_freeradius /etc/freeradius/sites-available/linotp
+COPY apache.conf /etc/apache2/sites-available/linotp2
 
 RUN ln -s /etc/freeradius/sites-available/linotp /etc/freeradius/sites-enabled &&\
 	rm -f /etc/apache2/sites-enabled/000-default
 
 COPY s3download.py /bin/s3download
 COPY bootstrap.sh /bin/bootstrap
+COPY apacheconfig.py /bin/apacheconfig
 
 ENTRYPOINT bootstrap

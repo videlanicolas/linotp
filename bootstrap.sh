@@ -56,45 +56,46 @@ if env | grep -q ^LINOTP_SPLITATSIGN=
 fi
 sed -i "/^sqlalchemy.url = /s/=.*/= mysql:\/\/$LINOTP_USER:$LINOTP_PASSWORD@$LINOTP_HOSTNAME\/$LINOTP_DB/" /etc/linotp2/linotp.ini
 
-if env | grep -q ^AWS_BUCKET= && env | grep -q ^AWS_SECRET_KEY= && env | grep -q ^AWS_ACCESS_KEY=
-	then
-		echo "Retrieving encKey file ..."
-		if env | grep -q ^AWS_PATH=; then
-			s3download $AWS_BUCKET $AWS_PATH/encKey $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.enc
-			s3download $AWS_BUCKET $AWS_PATH/encKey.sha1 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.sha1
-		else
-			s3download $AWS_BUCKET linotp/encKey $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.enc
-			s3download $AWS_BUCKET linotp/encKey.sha1 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.sha1
-		fi
-		if env | grep -q ^ENCKEY_PASSWORD=
-			then
-				echo "Decrypting encKey file ..."
-				openssl aes-256-cbc -d -a -in /etc/linotp2/encKey.enc -out /etc/linotp2/encKey -k $ENCKEY_PASSWORD
-				if ! (cd /etc/linotp2 && shasum -c encKey.sha1)
-					then
-						echo "Wrong decryption key or encKey is corrupt." > /dev/stderr
-						exit 1
-					else
-						echo "Successfully decrypted encription key."
-				fi
-			else
-				echo "Using random encription key."
-		fi
-		if env | grep -q ^PKCS12_PASSWORD=; then
-			echo "Retrieving linotp_certificate.p12 file ..."
-			if env | grep -q ^AWS_PATH=; then
-				s3download $AWS_BUCKET $AWS_PATH/linotp_certificate.p12 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/linotp_certificate.p12
-			else
-				s3download $AWS_BUCKET linotp/linotp_certificate.p12 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/linotp_certificate.p12
+if env | grep -q ^AWS_BUCKET= && env | grep -q ^AWS_SECRET_KEY= && env | grep -q ^AWS_ACCESS_KEY=; then
+	echo "Retrieving encKey file ..."
+	if env | grep -q ^AWS_PATH=; then
+		s3download $AWS_BUCKET $AWS_PATH/encKey $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.enc
+		s3download $AWS_BUCKET $AWS_PATH/encKey.sha1 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.sha1
+	else
+		s3download $AWS_BUCKET linotp/encKey $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.enc
+		s3download $AWS_BUCKET linotp/encKey.sha1 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.sha1
+	fi
+	if env | grep -q ^ENCKEY_PASSWORD=
+		then
+			echo "Decrypting encKey file ..."
+			openssl aes-256-cbc -d -a -in /etc/linotp2/encKey.enc -out /etc/linotp2/encKey -k $ENCKEY_PASSWORD
+			if ! (cd /etc/linotp2 && shasum -c encKey.sha1)
+				then
+					echo "Wrong decryption key or encKey is corrupt." > /dev/stderr
+					exit 1
+				else
+					echo "Successfully decrypted encription key."
 			fi
-			openssl pkcs12 -in /etc/linotp2/linotp_certificate.p12 -nocerts -out /etc/linotp2/private.pem -password file:<( echo -n "$PKCS12_PASSWORD" ) -passout file:<( echo -n "12344321")
-			openssl rsa -in /etc/linotp2/private.pem -out /etc/linotp2/private.pem -passin file:<( echo -n "12344321")
-			openssl rsa -pubout -in /etc/linotp2/private.pem -out /etc/linotp2/public.pem
-			rm -f /etc/linotp2/linotp_certificate.p12
 		else
-			echo "Using default RSA certificate."
+			echo "Using random encription key."
+	fi
+	if env | grep -q ^PKCS12_PASSWORD=; then
+		echo "Retrieving linotp_certificate.p12 file ..."
+		if env | grep -q ^AWS_PATH=; then
+			s3download $AWS_BUCKET $AWS_PATH/linotp_certificate.p12 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/linotp_certificate.p12
+		else
+			s3download $AWS_BUCKET linotp/linotp_certificate.p12 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/linotp_certificate.p12
 		fi
+		openssl pkcs12 -in /etc/linotp2/linotp_certificate.p12 -nocerts -out /etc/linotp2/private.pem -password file:<( echo -n "$PKCS12_PASSWORD" ) -passout file:<( echo -n "12344321")
+		openssl rsa -in /etc/linotp2/private.pem -out /etc/linotp2/private.pem -passin file:<( echo -n "12344321")
+		openssl rsa -pubout -in /etc/linotp2/private.pem -out /etc/linotp2/public.pem
+		rm -f /etc/linotp2/linotp_certificate.p12
+	else
+		echo "Using default RSA certificate."
+	fi
 fi
+echo "Configuring apache file linotp.conf ..."
+apacheconfig
 echo "Configuring freeradius ..."
 sed -i "/^secret  =/s/=.*/= $RADIUS_SECRET/" /etc/freeradius/clients.conf
 sed -i "/^REALM=/s/=.*/= $RADIUS_REALM/" /etc/linotp2/rlm_perl.ini
