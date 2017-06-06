@@ -89,7 +89,7 @@ if env | grep -q ^AWS_BUCKET= && env | grep -q ^AWS_SECRET_KEY= && env | grep -q
 			fi
 			openssl pkcs12 -in /etc/linotp2/linotp_certificate.p12 -nocerts -out /etc/linotp2/private.pem -password file:<( echo -n "$PKCS12_PASSWORD" ) -passout file:<( echo -n "12344321")
 			openssl rsa -in /etc/linotp2/private.pem -out /etc/linotp2/private.pem -passin file:<( echo -n "12344321")
-			openssl rsa -pubout -noout -in /etc/linotp2/private.pem -out /etc/linotp2/public.pem
+			openssl rsa -pubout -in /etc/linotp2/private.pem -out /etc/linotp2/public.pem
 			rm -f /etc/linotp2/linotp_certificate.p12
 		else
 			echo "Using default RSA certificate."
