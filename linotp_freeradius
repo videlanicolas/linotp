@@ -29,9 +29,17 @@ authorize {
 
         # We got no radius_shortname_map!
         pap
+
+	if (ok || updated) {
+    		update control {
+        		Auth-Type := Perl
+    		}
+	}
 }
 
 #here the linotp perl module is called for further processing
 authenticate {
-        perl
+	Auth-Type Perl {
+	    perl
+	}
 }

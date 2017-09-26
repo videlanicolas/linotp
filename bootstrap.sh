@@ -62,8 +62,8 @@ if env | grep -q ^AWS_BUCKET= && env | grep -q ^AWS_SECRET_KEY= && env | grep -q
 		s3download $AWS_BUCKET $AWS_PATH/encKey $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.enc
 		s3download $AWS_BUCKET $AWS_PATH/encKey.sha1 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.sha1
 	else
-		s3download $AWS_BUCKET linotp/encKey $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.enc
-		s3download $AWS_BUCKET linotp/encKey.sha1 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.sha1
+		s3download $AWS_BUCKET encKey $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.enc
+		s3download $AWS_BUCKET encKey.sha1 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/encKey.sha1
 	fi
 	if env | grep -q ^ENCKEY_PASSWORD=
 		then
@@ -84,7 +84,7 @@ if env | grep -q ^AWS_BUCKET= && env | grep -q ^AWS_SECRET_KEY= && env | grep -q
 		if env | grep -q ^AWS_PATH=; then
 			s3download $AWS_BUCKET $AWS_PATH/linotp_certificate.p12 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/linotp_certificate.p12
 		else
-			s3download $AWS_BUCKET linotp/linotp_certificate.p12 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/linotp_certificate.p12
+			s3download $AWS_BUCKET linotp_certificate.p12 $AWS_ACCESS_KEY $AWS_SECRET_KEY /etc/linotp2/linotp_certificate.p12
 		fi
 		openssl pkcs12 -in /etc/linotp2/linotp_certificate.p12 -nocerts -out /etc/linotp2/private.pem -password file:<( echo -n "$PKCS12_PASSWORD" ) -passout file:<( echo -n "12344321")
 		openssl rsa -in /etc/linotp2/private.pem -out /etc/linotp2/private.pem -passin file:<( echo -n "12344321")
@@ -96,13 +96,16 @@ if env | grep -q ^AWS_BUCKET= && env | grep -q ^AWS_SECRET_KEY= && env | grep -q
 fi
 echo "Configuring apache file linotp.conf ..."
 apacheconfig
+cat /etc/apache2/sites-enabled/linotp2.conf
 echo "Configuring freeradius ..."
-sed -i "/^secret  =/s/=.*/= $RADIUS_SECRET/" /etc/freeradius/clients.conf
-sed -i "/^REALM=/s/=.*/= $RADIUS_REALM/" /etc/linotp2/rlm_perl.ini
-sed -i "/^SSL_CHECK=/s/=.*/= $RADIUS_SSL_CHECK/" /etc/linotp2/rlm_perl.ini
-#Start freeradius
-freeradius
+sed -i 's/^\(.*secret  =\).*/\1 '$RADIUS_SECRET'/' /etc/freeradius/clients.conf
+sed -i 's/^\(.*REALM=\).*/\1'$RADIUS_REALM'/' /etc/linotp2/rlm_perl.ini
+sed -i 's/^\(.*SSL_CHECK=\).*/\1'$RADIUS_SSL_CHECK'/' /etc/linotp2/rlm_perl.ini
+
+#sed -i "/^secret  =/s/=.*/= $RADIUS_SECRET/" /etc/freeradius/clients.conf
+#sed -i "/^REALM=/s/=.*/= $RADIUS_REALM/" /etc/linotp2/rlm_perl.ini
+#sed -i "/^SSL_CHECK=/s/=.*/= $RADIUS_SSL_CHECK/" /etc/linotp2/rlm_perl.ini
 #Start apache2 (wtf...)
 service apache2 start
-service apache2 stop
-apache2ctl -X
+#Start freeradius
+freeradius -X
